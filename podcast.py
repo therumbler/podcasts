@@ -1,6 +1,7 @@
 #!/usr/local/bin/python3
 import xml.etree.ElementTree as ET
 from datetime import datetime
+from email.utils import parsedate_to_datetime
 import json
 import re
 import os
@@ -49,7 +50,7 @@ class Podcast():
             exists = True
             if feed_url == obj['url']:
                 # Already added
-                return True
+                return slug
             else:
                 # needs to be added
                 pass
@@ -147,13 +148,14 @@ class Podcast():
             '%a, %d %b %Y %H:%M:%S +0000',
             '%a, %d %b %Y %H:%M:%S %z',
         ]
-        date_published = None
-        for fmt in formats:
-            try:
-                date_published = datetime.strptime(date_published_string, fmt)
-                break
-            except ValueError as e:
-                pass
+        date_published = parsedate_to_datetime(date_published_string)
+        if not date_published:
+            for fmt in formats:
+                try:
+                    date_published = datetime.strptime(date_published_string, fmt)
+                    break
+                except ValueError as e:
+                    pass
 
         if not date_published:
             raise ValueError('none of the formats matched "{}"'.format(date_published_string)) 
@@ -181,12 +183,16 @@ class Podcast():
         except AttributeError as e:
             author_name = None
             
+        try:
+            image =  xml_item.find('itunes:image', self.namespaces).get('href'),
+        except AttributeError as e:
+            image = None
         json_item = {
             'id': xml_item.find('guid').text,
             'url': url,
             'title': xml_item.find('title').text,
             'content_text': content_text,
-            'image': xml_item.find('itunes:image', self.namespaces).get('href'),
+            'image': image,
             'date_published': date_published.isoformat(),
             'tags': tags,
             'author': {
@@ -205,7 +211,11 @@ class Podcast():
     def _get_seconds(time_string):
         if ":" not in time_string:
             return int(time_string)
-        h, m, s = time_string.split(':')
+        try:
+            h, m, s = time_string.split(':')
+        except ValueError as e:
+            h = 0
+            m, s = time_string.split(':')
         return int(h) * 3600 + int(m) * 60 + int(s)
 
     @staticmethod
