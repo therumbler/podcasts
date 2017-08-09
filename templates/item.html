@@ -1,0 +1,10 @@
+<h3>{{item.title}}</h3>
+<p>
+<time datetime="{{item.date_published}}">{{item.date_published}}</time>
+<p>
+<audio preload=none controls>
+{% for attachment in item.attachments %}
+<source src="{{attachment.url}}" type="{{attachment.mime_type}}">
+{% endfor %}
+</audio>
+<p>{{item.content_text|safe}}</p>
