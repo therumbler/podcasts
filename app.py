@@ -24,6 +24,13 @@ def from_slug(slug):
     json_feed = p.process_slug(slug)
     return render_template("podcast.html", **json_feed)
 
+@app.route('/gitpull')
+def gitpull():
+    import os
+    cmd = ['bash', 'gitpull.sh']
+    os.subprocess(cmd)
+    return 'pulled'
+
 def main():
     app.run(debug = True, host='0.0.0.0')
 
