@@ -37,7 +37,6 @@ class Podcast():
 
     def add_to_cache(self, json_feed, feed_url):
         new_slug = slug = self.slugify(json_feed['title'])
-        print (json_feed['home_page_url'])
 
         filepath = 'etc/{}.json'.format(slug)
 
@@ -49,7 +48,7 @@ class Podcast():
             exists = True
             if feed_url == obj['url']:
                 # Already added
-                return True
+                return slug
             else:
                 # needs to be added
                 pass
