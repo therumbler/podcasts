@@ -1,6 +1,24 @@
 from flask import Flask, render_template, request, redirect, send_from_directory
+import subprocess
+import logging
+import hmac
+from configparser import ConfigParser
 from podcast import Podcast
+
 app = Flask(__name__)
+    
+def get_config():
+    cp = ConfigParser()
+    path = 'etc/config.conf'
+    with open(path) as f:
+        cp.readfp(f)
+
+    config = {}
+    for section in cp.sections():
+        items = cp.items(section)
+        config[section] =  {item[0]: item[1] for item in items}
+
+    return config
 
 @app.route("/")
 def index():
@@ -24,11 +42,17 @@ def from_slug(slug):
     json_feed = p.process_slug(slug)
     return render_template("podcast.html", **json_feed)
 
-@app.route('/gitpull')
+@app.route('/gitpull', methods = ['POST'])
 def gitpull():
-    import os
-    cmd = ['bash', 'gitpull.sh']
-    os.subprocess(cmd)
+    config = get_config()
+    
+    key = str.encode(config['github']['secret'])
+    msg = request.data
+    signature = hmac.new(key, msg).hexdigest()
+    request_signature = request.headers['X-Hub-Signature']
+
+    cmd = ['bash', './gitpull.sh']
+    subprocess.run(cmd)
     return 'pulled'
 
 def main():
