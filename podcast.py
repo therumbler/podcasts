@@ -38,7 +38,6 @@ class Podcast():
 
     def add_to_cache(self, json_feed, feed_url):
         new_slug = slug = self.slugify(json_feed['title'])
-        print (json_feed['home_page_url'])
 
         filepath = 'etc/{}.json'.format(slug)
 
