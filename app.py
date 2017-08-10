@@ -9,7 +9,7 @@ app = Flask(__name__)
     
 def get_config():
     cp = ConfigParser()
-    path = 'etc/config.conf'
+    path = 'config.conf'
     with open(path) as f:
         cp.readfp(f)
 
