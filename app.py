@@ -8,6 +8,7 @@ from podcast import Podcast
 app = Flask(__name__)
     
 def get_config():
+    '''loads the config file into a dict'''
     cp = ConfigParser()
     path = 'config.conf'
     with open(path) as f:
