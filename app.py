@@ -47,13 +47,16 @@ def gitpull():
     config = get_config()
     
     key = str.encode(config['github']['secret'])
-    msg = request.data
-    signature = hmac.new(key, msg).hexdigest()
+    data = request.get_data()
+    signature = hmac.new(key, data).hexdigest()
     request_signature = request.headers['X-Hub-Signature']
 
-    cmd = ['bash', './gitpull.sh']
-    subprocess.run(cmd)
-    return 'pulled'
+    if signature == request_signature:
+        cmd = ['bash', './gitpull.sh']
+        subprocess.run(cmd)
+        return 'pulled'
+    else:
+        return 'fail'
 
 def main():
     app.run(debug = True, host='0.0.0.0')
