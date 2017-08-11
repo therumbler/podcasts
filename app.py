@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, send_from_directory
+from flask import Flask, render_template, request, redirect, send_from_directory, make_response
 import subprocess
 import logging
 import hmac
@@ -57,7 +57,7 @@ def gitpull():
         subprocess.run(cmd)
         return 'pulled'
     else:
-        return 'fail'
+        return make_response('Auth Failuer: The signatures don\'t match', 403)
 
 def main():
     app.run(debug = True, host='0.0.0.0')
