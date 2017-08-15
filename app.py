@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, send_from_directory
 import subprocess
 import logging
 import hmac
+from hashlib import sha1
 from configparser import ConfigParser
 from podcast import Podcast
 
@@ -49,15 +50,16 @@ def gitpull():
     
     key = str.encode(config['github']['secret'])
     data = request.get_data()
-    signature = hmac.new(key, data).hexdigest()
+    signature = hmac.new(key, data, sha1).hexdigest()
     request_signature = request.headers['X-Hub-Signature']
+    request_signature = request_signature.replace("sha1=", "")
 
     if signature == request_signature:
         cmd = ['bash', './gitpull.sh']
         subprocess.run(cmd)
         return 'pulled'
     else:
-        return make_response('Auth Failure: The signatures don\'t match', 403)
+        return make_response('Auth Failure: The signatures don\'t match \n Request: {}\n Calculated: {}\n'.format(request_signature, signature), 403)
 
 def main():
     app.run(debug = True, host='0.0.0.0')
