@@ -57,7 +57,7 @@ def gitpull():
         subprocess.run(cmd)
         return 'pulled'
     else:
-        return make_response('Auth Failuer: The signatures don\'t match', 403)
+        return make_response('Auth Failure: The signatures don\'t match', 403)
 
 def main():
     app.run(debug = True, host='0.0.0.0')
