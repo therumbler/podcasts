@@ -1,4 +1,12 @@
-<h2>{{title}}</h2>
-{% for item in items%}
-    {% include "item.html" %}
-{% endfor %}
+<!doctype html>
+<html>
+    <head>
+        <title>{{title}}</title>
+    </head>
+    <body>
+        <h2>{{title}}</h2>
+        {% for item in items%}
+            {% include "item.html" %}
+        {% endfor %}
+    </body>
+</html>

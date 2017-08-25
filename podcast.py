@@ -140,7 +140,6 @@ class Podcast():
     def rss_to_json_feed_item(self, xml_item):
         date_published_string = xml_item.find('pubDate').text.strip()
 
-        print('type = {}'.format(type(date_published_string)))
         formats = [
             '%a, %d %b %Y %H:%M %Z',
             '%a, %d %b %Y %H:%M:%S %Z',
